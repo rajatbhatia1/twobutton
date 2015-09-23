@@ -1,7 +1,65 @@
 #include <iostream>
 #include <inttypes.h>
-#include <math.h>
-#include <set>
+#include <list>
+#include <algorithm>
+#include <cassert>
+
+uint32_t num_attempts3 (uint32_t n, uint32_t m)
+{
+    if (n >= m) return n - m;
+    std::list<uint32_t> steps = {n};
+
+    uint32_t count=0;
+    std::list<uint32_t>::iterator x = steps.begin();
+    std::list<uint32_t>::iterator y = steps.end();
+    bool solution_reached = false;
+    uint32_t last = n;
+    while (!solution_reached)
+    {
+        std::list<uint32_t> tmp_steps;
+        for (std::list<uint32_t>::iterator it=x; it!=y; ++it)
+        {
+            uint32_t k = *it;
+            if (k>1) {
+                if ((k-1)==m) {
+                    solution_reached = true;
+                }
+                if (std::find(steps.begin(), steps.end(), k-1) == steps.end()) {
+                    tmp_steps.emplace_back(k-1);
+                    //                    last = k-1;
+                }
+            }
+            if (k<2*m) {
+                if ((k*2)==m) {
+                    solution_reached = true;
+                }
+                if (std::find(steps.begin(), steps.end(), k*2) == steps.end()) {
+                    tmp_steps.emplace_back(k*2);
+                    //                    last = k*2;
+                }
+            }
+        }
+        ++count;
+        steps.splice(steps.end(), tmp_steps);
+
+        x = std::find(steps.begin(), steps.end(), last);
+        x++;
+        last = steps.back();
+        y=steps.end();
+    }
+    assert(solution_reached);
+    return count;
+}
+
+uint32_t num_attempts2 (uint32_t n, uint32_t m)
+{
+
+  // std::cout << "n=" << n << " m=" << m << std::endl;
+  if (n >= m) return n - m;
+
+  return  1 + (m&1) + num_attempts2(n, (m+(m&1)) >> 1);
+
+}
 
 uint32_t num_attempts (uint32_t n, uint32_t m)
 {
@@ -32,8 +90,7 @@ uint32_t num_attempts (uint32_t n, uint32_t m)
 }
 
 uint32_t do_attemps(uint32_t n, uint32_t m) {
-    attempted.clear();
-    uint32_t k = num_attempts(n, m);
+    uint32_t k = num_attempts3(n, m);
     return k;
 }
 
@@ -57,4 +114,3 @@ int main () {
     std::cout << do_attemps(n, m) << std::endl;
 #endif
 }
-
