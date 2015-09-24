@@ -4,6 +4,10 @@
 #include <algorithm>
 #include <cassert>
 
+#ifdef TESTING
+#include "gtest/gtest.h"
+#endif
+
 uint32_t num_attempts3 (uint32_t n, uint32_t m)
 {
     if (n >= m) return n - m;
@@ -94,6 +98,7 @@ uint32_t do_attemps(uint32_t n, uint32_t m) {
     return k;
 }
 
+#ifndef TESTING
 int main () {
 #ifdef TEST
     std::cout << "2 1 " << do_attemps(2, 1) << std::endl;
@@ -114,3 +119,27 @@ int main () {
     std::cout << do_attemps(n, m) << std::endl;
 #endif
 }
+#endif
+
+#ifdef TESTING
+TEST(ButtonsFixture, eval_1) {
+  uint32_t n = num_attempts3(2,1);
+  ASSERT_EQ(n, 1);
+}
+
+TEST(ButtonsFixture, eval_2) {
+  uint32_t n = num_attempts3(666, 6666);
+  ASSERT_EQ(n, 255);
+}
+
+TEST(ButtonsFixture, eval_3) {
+  uint32_t n = num_attempts3(10,1);
+  ASSERT_EQ(n, 9);
+}
+
+TEST(ButtonsFixture, eval_4) {
+  uint32_t n = num_attempts3(4,6);
+  ASSERT_EQ(n, 2);
+}
+
+#endif
